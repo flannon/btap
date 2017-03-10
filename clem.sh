@@ -17,16 +17,19 @@ declare -a FILES=($APPLECAMERA $AVC $CMIOVDC $CMIOSVDC $CMIOSPVDC $QTDIGITIZER)
 
 function cutcamera() {
 
+  echo "function cutcamera"
   #for FILE in $APPLECAMERA $AVC $CMIOVDC $CMIOSVDC $CMIOSPVDC $QTDIGITIZER;
   for FILE in "${FILES[@]}"
   do
     if [[ -f $FILE ]]; then
-      PID=$(lsof -Fp $FILE)
-      #if [[ -z ${PID+x} ]]; then
-      if [[ -n $PID ]]; then
-        printf "${PID:1}\n"
-        kill -9 ${PID:1}
-      fi
+      PIDS=$( (lsof -Fp $FILE) )
+      for PID in $PIDS
+      do
+        if [[ -n $PID ]]; then
+          printf "kill: ${PID:1}\n"
+          kill -9 ${PID:1}
+        fi
+      done
     fi
   done
 
@@ -85,10 +88,10 @@ function test() {
   done
 }
 
-test
+#test
 
 #cutsound
-#cutcamera
+cutcamera
 #disablecamera
 
 #rollcamera
