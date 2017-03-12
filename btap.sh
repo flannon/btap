@@ -34,10 +34,10 @@ readonly OSVERSION=$(sw_vers -productVersion)
 # Set $VDC based on OS major version
 case ${OSVERSION::5} in
   10.9.)
-      readonly OSVDC='/System/Library/Frameworks/CoreMediaIO.framework/Versions/A/Resources/VDC.plugin/Contents/MacOS/VDC'
-    if [[ -f $OSVDC ]]
+      #readonly OSVDC='/System/Library/Frameworks/CoreMediaIO.framework/Versions/A/Resources/VDC.plugin/Contents/MacOS/VDC'
+    if [[ -f $CMIOVDC ]]
     then
-      readonly VDC=${OSVDC}
+      readonly VDC=$CMIOVDC
     else
       echo "OS ${OSVERSION}: VDC file not found"
       exit 3
@@ -54,10 +54,9 @@ case ${OSVERSION::5} in
     fi
     ;;
   10.11)
-    readonly OSVDC='/System/Library/PrivateFrameworks/CoreMediaIOServicesPrivate.framework/Versions/A/Resources/VDC.plugin/Contents/MacOS/VDC'
-    if [[ -f $OSVDC ]]
+    if [[ -f $CMIOVDC ]]
     then
-      readonly VDC=$OSVDC
+      readonly VDC=$CMIOVDC
     else
       echo "OS ${OSVERSION}: VDC file not found"
       exit 3
