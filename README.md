@@ -16,4 +16,9 @@ btap.sh is the result of these questions. It's not perfect, but it is better tha
   * Self install feature will install btap.sh in /usr/local/bin and make it availabe as btap.  Requires that you yave /usr/local/bin in our $PATH.
   * Reenables audio and video with
  
-    $ btap -r | btap --rolling
+    $ btap 
+    $ btap -a 
+    $ btap -v
+      * verbose mode for debuggin 
+
+    
