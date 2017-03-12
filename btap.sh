@@ -272,7 +272,6 @@ do
     l) logfile="${OPTARG}" ;;
     v) 
       set -x
-      test
       cut
       ;;
     t)
