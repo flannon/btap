@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #set -euvx
-#set -eux
 #set -eu
 
 #if [[ $EUID -ne 0 ]]; then
@@ -21,20 +20,16 @@ readonly PLIST="/Library/LaunchDaemons/com.5eight5.btap.plist"
 
 readonly APPLECAMERA=/Library/CoreMediaIO/Plug-Ins/DAL/AppleCamera.plugin/Contents/MacOS/AppleCamera
 readonly AVC=/System/Library/PrivateFrameworks/CoreMediaIOServicesPrivate.framework/Versions/A/Resources/AVC.plugin/Contents/MacOS/AVC
-###
-# VDCMAVERICKS
 readonly CMIOVDC=/System/Library/Frameworks/CoreMediaIO.framework/Versions/A/Resources/VDC.plugin/Contents/MacOS/VDC
 readonly CMIOSVDC=/System/Library/PrivateFrameworks/CoreMediaIOServices.framework/Versions/A/Resources/VDC.plugin/Contents/MacOS/VDC
 readonly CMIOSPVDC=/System/Library/PrivateFrameworks/CoreMediaIOServicesPrivate.framework/Versions/A/Resources/VDC.plugin/Contents/MacOS/VDC
 readonly QTDIGITIZER=/System/Library/QuickTime/QuickTimeUSBVDCDigitizer.component/Contents/MacOS/QuickTimeUSBVDCDigitizer
 
-#OSVERSION=$(sw_vers -productVersion)
 readonly OSVERSION=$(sw_vers -productVersion)
 
 # Set $VDC based on OS major version
 case ${OSVERSION::5} in
   10.9.)
-      #readonly OSVDC='/System/Library/Frameworks/CoreMediaIO.framework/Versions/A/Resources/VDC.plugin/Contents/MacOS/VDC'
     if [[ -f $CMIOVDC ]]
     then
       readonly VDC=$CMIOVDC
@@ -67,7 +62,6 @@ case ${OSVERSION::5} in
     ;;
 esac
 
-#declare -a FILES=($APPLECAMERA $AVC $CMIOVDC $CMIOSVDC $CMIOSPVDC $QTDIGITIZER)
 declare -a readonly FILES=($APPLECAMERA $AVC $VDC $QTDIGITIZER)
 
 cutcamera() {
@@ -75,6 +69,8 @@ cutcamera() {
   local file
   local pid
   local pids
+
+  echo "Cut video..."
 
   for file in "${FILES[@]}"
   do
@@ -96,6 +92,8 @@ disablecamera() {
   local file
   local mode
 
+  echo "Disable video..."
+
   for file in "${FILES[@]}"
   do
     if [[ -f $file ]]; then
@@ -112,11 +110,11 @@ disablecamera() {
 
 cutsound() {
 
-  MICLEVEL=$(osascript -e 'input volume of (get volume settings)')
+  local miclevel=$(osascript -e 'input volume of (get volume settings)')
 
-  #printf "$MICLEVEL\n"
+  echo "Cut sound..."
 
-  if [[ $MICLEVEL != 0 ]]; then
+  if [[ $miclevel != 0 ]]; then
     osascript -e 'set volume input volume 0'
   fi
 
@@ -214,49 +212,8 @@ fixer() {
 
 }
 
-install() {
-  
-  set -e
 
-  local basedir
-  #local basename=btap.sh
-
-  if [[ $EUID -ne 0 ]]; then
-    echo "$0 must be installed as root."
-    exit 5
-  fi
-
-  if [[ ! -f $INSTALLDIR ]]; then
-    mkdir -p $INSTALLDIR
-  fi
-
-  basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-  
-  if [[ ! -f "$INSTALLDIR/$BASENAME" ]]; then
-    cp -f "$basedir/$BASENAME" $INSTALLDIR/$BASENAME
-    ln -s $INSTALLDIR/$BASENAME $INSTALLDIR/${BASENAME::4}
-  else
-    echo "$INSTALLDIR/$BASENAME exists"
-  fi
-
-}
-
-test() {
-
-  local file=com.5eight5.btap.plist
-
-  #for file in "${FILES[@]}"
-  #do
-  #  if [[ ! -z $file ]]
-  #  then
-  #    echo $file
-  #  else
-  #    echo "$file NOT SET"
-  #  fi
-  #done
-}
-
-while getopts 'afil:vt' flag;
+while getopts 'afil:v' flag;
 do
   case "${flag}" in
     a) 
@@ -265,16 +222,10 @@ do
     f) 
       fixer
       ;;
-    i)
-      install 
-      ;;
     l) logfile="${OPTARG}" ;;
     v) 
       set -x
       cut
-      ;;
-    t)
-      test
       ;;
     *) error "Unexpected option ${flag}" ;;
   esac
