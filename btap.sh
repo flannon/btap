@@ -12,11 +12,12 @@ verbose='false'
 logfile='/usr/local/var/log'
 
 
-readonly BASENAME=btap.sh
-readonly CUTMODE=100000
+readonly BTAP_FULL_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 readonly INSTALLDIR="/usr/local/bin"
+readonly CUTMODE=100000
 readonly ROLLINGMODE=755
-readonly PLIST="/Library/LaunchDaemons/com.5eight5.btap.plist"
+readonly LAUNCHDIR="/Library/LaunchDaemons"
+readonly PLIST="com.5eight5.btap.plist"
 
 readonly APPLECAMERA=/Library/CoreMediaIO/Plug-Ins/DAL/AppleCamera.plugin/Contents/MacOS/AppleCamera
 readonly AVC=/System/Library/PrivateFrameworks/CoreMediaIOServicesPrivate.framework/Versions/A/Resources/AVC.plugin/Contents/MacOS/AVC
@@ -30,35 +31,19 @@ readonly OSVERSION=$(sw_vers -productVersion)
 # Set $VDC based on OS major version
 case ${OSVERSION::5} in
   10.9.)
-    if [[ -f $CMIOVDC ]]
-    then
-      readonly VDC=$CMIOVDC
-    else
-      echo "OS ${OSVERSION}: VDC file not found"
-      exit 3
-    fi
+    [[ -f $CMIOVDC ]] || { echo "OS ${OSVERSION}: VDC not found"; exit 3; }
+    readonly VDC=$CMIOVDC
     ;;
   10.10)
-    readonly OSVDC='/System/Library/PrivateFrameworks/CoreMediaIOServices.framework/Versions/A/Resources/VDC.plugin/Contents/MacOS/VDC'
-    if [[ -f $OSVDC ]]
-    then
-      readonly VDC=$OSVDC
-    else
-      echo "OS ${OSVERSION}: VDC file not found"
-      exit 3
-    fi
+    [[ -f $CMIOSVDC ]] || { echo "OS ${OSVERSION}: VDC not found"; exit 3; }
+    readonly VDC=$CMIOSVDC
     ;;
   10.11)
-    if [[ -f $CMIOVDC ]]
-    then
-      readonly VDC=$CMIOVDC
-    else
-      echo "OS ${OSVERSION}: VDC file not found"
-      exit 3
-    fi
+    [[ -f $CMIOVDC ]] || { echo "OS ${OSVERSION}: VDC not found"; exit 3; }
+    readonly VDC=$CMIOVDC
     ;;
   *)
-    error "OS ${OSVERSION} not supported at this time"
+    echo "OS ${OSVERSION} not supported at this time" && exit 4;
     ;;
 esac
 
@@ -122,16 +107,16 @@ cutsound() {
 
 launcher() {
 
-  cat << EOF > $PLIST
+  cat << EOF > ${LAUNCHDIR}/${PLIST}
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.5eight5.com.btap</string>
+    <string>${PLIST}</string>
     <key>ProgramArguments</key>
     <array>
-        <string>$INSTALLDIR/${BASENAME::4}</string>
+    <string>${BTAP_FULL_PATH}</string>
         <string>-f</string>
     </array>
     <key>StartInterval</key>
@@ -140,7 +125,7 @@ launcher() {
 </plist>
 EOF
 
-  launchctl load -w $PLIST
+launchctl load -w ${LAUNCHDIR}/${PLIST}
 
 }
 
@@ -184,12 +169,15 @@ rollsound() {
 }
 
 action() {
+
+  set -e 
+
   rollsound
   rollcamera
 
   if [[ $EUID -eq 0 ]]; then
-    launchctl unload -w $PLIST
-    rm -f $PLIST
+    launchctl unload -w ${LAUNCHDIR}/${PLIST}
+    rm -f ${LAUCHDIR}/${PLIST}
   fi
 
 }
