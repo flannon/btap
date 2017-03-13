@@ -42,6 +42,10 @@ case ${OSVERSION::5} in
     [[ -f $CMIOVDC ]] || { echo "OS ${OSVERSION}: VDC not found"; exit 3; }
     readonly VDC=$CMIOVDC
     ;;
+  10.12)
+    [[ -f $CMIOVDC ]] || { echo "OS ${OSVERSION}: VDC not found"; exit 3; }
+    readonly VDC=$CMIOVDC
+    ;;
   *)
     echo "OS ${OSVERSION} not supported at this time" && exit 4;
     ;;
