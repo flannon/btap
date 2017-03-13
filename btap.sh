@@ -49,6 +49,32 @@ esac
 
 declare -a readonly FILES=($APPLECAMERA $AVC $VDC $QTDIGITIZER)
 
+launcher() {
+
+  echo "Load lauch config ${PLIST}"
+
+  cat << EOF > ${LAUNCHDIR}/${PLIST}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>${PLIST}</string>
+    <key>ProgramArguments</key>
+    <array>
+    <string>${BTAP_FULL_PATH}</string>
+        <string>-f</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>5</integer>
+</dict>
+</plist>
+EOF
+
+launchctl load -w ${LAUNCHDIR}/${PLIST}
+
+}
+
 cutcamera() {
 
   local file
@@ -102,30 +128,6 @@ cutsound() {
   if [[ $miclevel != 0 ]]; then
     osascript -e 'set volume input volume 0'
   fi
-
-}
-
-launcher() {
-
-  cat << EOF > ${LAUNCHDIR}/${PLIST}
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>${PLIST}</string>
-    <key>ProgramArguments</key>
-    <array>
-    <string>${BTAP_FULL_PATH}</string>
-        <string>-f</string>
-    </array>
-    <key>StartInterval</key>
-    <integer>1</integer>
-</dict>
-</plist>
-EOF
-
-launchctl load -w ${LAUNCHDIR}/${PLIST}
 
 }
 
