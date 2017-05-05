@@ -6,7 +6,7 @@ The impetus for this script came when I saw this photo of Mark Zuckerberg in whi
   2. Tape on the microphone jack?  Really?  What's that all about?
   3. I should have a better method for securing my camera than simply covering it with a postit.
 
-btap.sh is the result of these questions. It's not perfect, but it is better than a PostIt for securiing your workstation's camera and microphone.  
+btap.sh is the result of these questions. It's not perfect, but it is better than a PostIt for securing your workstation's camera and microphone.
 
 ### btap features
 
@@ -14,7 +14,7 @@ btap.sh is the result of these questions. It's not perfect, but it is better tha
 
     $ btap
 
-  *  When run as root it also starts a lauchd job that monitors the video droivers and audio levels.  Should they become re-enabled it will re-run btap.
+  *  When run as root it also starts a lauchd job that monitors the video drivers and audio levels.  Should they become re-enabled it will re-run btap.
       
     $ sudo btap
 
@@ -22,11 +22,11 @@ btap.sh is the result of these questions. It's not perfect, but it is better tha
 
     $ sudo btap -a
 
-  * Sets system microphone input levels to zero.  This isn't perfect, but for a quick and dirty solution it gets the job done.  For future versions I want actually disable adio input.
+  * Sets system microphone input levels to zero.  This isn't perfect, but for a quick and dirty solution it gets the job done.  A better solution would be to actually disable audio input.
   * Disables the quicktime video driver.
   * Kills any processes that are currently using the video driver
   * Loads a lauchd script to monitor the video and audio input state and disable them again should another process enable input.
-  * Logging <needs descripton>
+  * Logging  - not yet implemented. <needs descripton>
   * Reenables audio and video with the -a flag.
  
     $ btap 
