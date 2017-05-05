@@ -1,6 +1,6 @@
 ##Better than a PostIt
 
-The impetus for this project came when I saw this photo of Mark Zuckerberg in which it's clearly vissbile that he's taped over his camera and microphone jack.  When I saw this image I immediatly thought three things.
+The impetus for this script came when I saw this photo of Mark Zuckerberg in which it's clearly visibile that he's taped over his camera and microphone jack.  When I saw this image I immediatly thought three things.
 
   1. With the resources at his disposal, shouldn't Zuckerberg have assigned someone the task of writing a utility to easily control his camera and microphone?
   2. Tape on the microphone jack?  Really?  What's that all about?
